@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
 import { ProductListPage } from './pages/ProductListPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { VirtualTryOnPage } from './pages/VirtualTryOnPage';
 import { WishlistSidenav } from './components/WishlistSidenav';
+import { ApiKeyModal } from './components/ApiKeyModal';
 import { Product } from './types';
 import { products } from './data/products';
 
@@ -19,6 +20,19 @@ function App() {
   const [view, setView] = useState<View>({ page: 'home' });
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
+
+  useEffect(() => {
+    const apiKey = sessionStorage.getItem('gemini-api-key');
+    if (!apiKey) {
+      setIsApiKeyModalOpen(true);
+    }
+  }, []);
+
+  const handleApiKeySave = (key: string) => {
+    sessionStorage.setItem('gemini-api-key', key);
+    setIsApiKeyModalOpen(false);
+  };
 
   const navigateToHome = () => setView({ page: 'home' });
   const navigateToProductList = (category: string) => setView({ page: 'productList', category });
@@ -74,6 +88,7 @@ function App() {
         return <VirtualTryOnPage 
                   product={view.product} 
                   onBack={() => navigateToProductDetail(view.product)} 
+                  onApiKeyRequest={() => setIsApiKeyModalOpen(true)}
                 />;
       default:
         return <HomePage onSelectCategory={navigateToProductList} />;
@@ -95,6 +110,12 @@ function App() {
         onRemoveFromWishlist={handleRemoveFromWishlist}
         onSelectProduct={navigateToProductDetail}
       />
+       {isApiKeyModalOpen && (
+        <ApiKeyModal 
+          onSave={handleApiKeySave}
+          onClose={() => setIsApiKeyModalOpen(false)}
+        />
+      )}
       <main className="container mx-auto p-4 md:p-8">
         {renderContent()}
       </main>

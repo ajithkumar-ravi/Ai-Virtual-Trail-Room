@@ -2,11 +2,14 @@
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { ContextData, FitAssessmentItem } from '../types';
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set.");
-}
+const getAiClient = (): GoogleGenAI => {
+    const apiKey = sessionStorage.getItem('gemini-api-key');
+    if (!apiKey) {
+        throw new Error("API_KEY_MISSING");
+    }
+    return new GoogleGenAI({ apiKey });
+};
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const fileToGenerativePart = (base64Data: string, mimeType: string) => {
   return {
@@ -18,6 +21,7 @@ const fileToGenerativePart = (base64Data: string, mimeType: string) => {
 };
 
 export async function generateTryOnImage(userImage: string, garmentImage: string, contextData: ContextData): Promise<string> {
+  const ai = getAiClient();
   const userImageMime = userImage.match(/data:(image\/\w+);base64,/)?.[1] || 'image/jpeg';
   const garmentImageMime = garmentImage.match(/data:(image\/\w+);base64,/)?.[1] || 'image/png';
 
@@ -56,6 +60,7 @@ export async function getFitAssessment(
   generatedImage: string,
   contextData: ContextData
 ): Promise<{ fitAssessment: FitAssessmentItem[], styleRecommendations: string[] }> {
+    const ai = getAiClient();
     const userImageMime = userImage.match(/data:(image\/\w+);base64,/)?.[1] || 'image/jpeg';
     const garmentImageMime = garmentImage.match(/data:(image\/\w+);base64,/)?.[1] || 'image/png';
     const generatedImageMime = generatedImage.match(/data:(image\/\w+);base64,/)?.[1] || 'image/png';
