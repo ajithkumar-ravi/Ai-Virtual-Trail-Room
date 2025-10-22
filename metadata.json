@@ -1,0 +1,5 @@
+{
+  "name": "AI Virtual Trial Room",
+  "description": "An AI-powered virtual trial room that allows users to see how clothes fit on them before buying. Upload your photo and a garment image to get a realistic virtual try-on, complete with a fit assessment and style recommendations.",
+  "requestFramePermissions": []
+}
