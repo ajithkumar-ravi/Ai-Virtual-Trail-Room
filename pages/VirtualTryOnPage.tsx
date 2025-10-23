@@ -8,7 +8,6 @@ import { ContextData, TryOnResult, Product } from '../types';
 interface VirtualTryOnPageProps {
     product: Product;
     onBack: () => void;
-    onApiKeyRequest: () => void;
 }
 
 const BackArrowIcon = () => (
@@ -30,7 +29,7 @@ async function imageUrlToBase64(url: string): Promise<string> {
   });
 }
 
-export const VirtualTryOnPage: React.FC<VirtualTryOnPageProps> = ({ product, onBack, onApiKeyRequest }) => {
+export const VirtualTryOnPage: React.FC<VirtualTryOnPageProps> = ({ product, onBack }) => {
   const [userImage, setUserImage] = useState<string | null>(null);
   const [garmentImage, setGarmentImage] = useState<string | null>(null);
   const [contextData, setContextData] = useState<ContextData>({
@@ -78,11 +77,7 @@ export const VirtualTryOnPage: React.FC<VirtualTryOnPageProps> = ({ product, onB
 
     } catch (err) {
       console.error(err);
-      if (err instanceof Error && err.message === 'API_KEY_MISSING') {
-         setError('Your Gemini API Key is missing. Please set it to use this feature.');
-      } else {
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
-      }
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -127,11 +122,8 @@ export const VirtualTryOnPage: React.FC<VirtualTryOnPageProps> = ({ product, onB
             disabled={!userImage || !garmentImage}
           />
            {error && (
-            <div className="text-red-500 bg-red-100 dark:text-red-300 dark:bg-red-900/50 p-3 rounded-lg flex items-center justify-between">
+            <div className="text-red-500 bg-red-100 dark:text-red-300 dark:bg-red-900/50 p-3 rounded-lg">
               <span>{error}</span>
-              {error.includes('API Key') && (
-                <button onClick={onApiKeyRequest} className="text-sm font-bold underline hover:text-red-700 dark:hover:text-red-200">Set Key</button>
-              )}
             </div>
           )}
         </div>

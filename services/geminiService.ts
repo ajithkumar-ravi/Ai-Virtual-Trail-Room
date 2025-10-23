@@ -3,11 +3,8 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { ContextData, FitAssessmentItem } from '../types';
 
 const getAiClient = (): GoogleGenAI => {
-    const apiKey = sessionStorage.getItem('gemini-api-key');
-    if (!apiKey) {
-        throw new Error("API_KEY_MISSING");
-    }
-    return new GoogleGenAI({ apiKey });
+    // The API key is injected from the environment.
+    return new GoogleGenAI({ apiKey: process.env.API_KEY });
 };
 
 

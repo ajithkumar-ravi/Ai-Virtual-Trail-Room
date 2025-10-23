@@ -8,8 +8,4 @@ export default defineConfig({
   // For example, if your repository URL is https://github.com/user/my-app,
   // the base should be '/my-app/'
   base: '/your-repo-name/',
-  define: {
-    // This handles the process.env check in the original code, though we no longer rely on it.
-    'process.env.API_KEY': '""'
-  }
 });
